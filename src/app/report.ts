@@ -10,8 +10,13 @@ const Line = (value, pageBreak = false) => {
     }
 
 }
-const Header = () => {
-    return { text: 'Header ' }
+const Header = (pageBreak = false) => {
+    if (pageBreak) {
+        return { text: 'Header ', pageBreak: 'before' }
+    } else {
+        return { text: 'Header ' }
+    }
+
 }
 const Footer = (pageBreak = false) => {
     if (pageBreak) {
@@ -27,28 +32,40 @@ const Detail = (totalLine, linesPerPage, firstTime = false) => {
 
     for (let lineNo = 1; lineNo <= totalLine; lineNo++) {
         if (lineNo == 1) {
-            result.push(Header())
-            result.push(Line(lineNo))
+            if (firstTime) {
+                result.push(Header())
+                result.push(Line(lineNo))
+            } else {
+                result.push(Header(true))
+                result.push(Line(lineNo))
+            }
+
         }
         else if (lineNo % linesPerPage == 1) {
-            result.push(Header())
+            result.push(Header(true))
             result.push(Line(lineNo))
             if (lineNo == totalLine) {
-                result.push(Footer(true))
+                result.push(Footer())
             }
         }
         else {
             result.push(Line(lineNo))
             if (lineNo % linesPerPage == 0 || lineNo == totalLine) {
-                result.push(Footer(true))
+                result.push(Footer())
             }
         }
     }
     return result
 }
-const report = () => {
+const report = (pageNo, numOfPage) => {
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
     let docDefinition = {
+        header: function(pageNo, numOfPage){ 
+            return { text: pageNo + '/' + numOfPage, alignment: 'right' }
+        },
+        footer: function(pageNo, numOfPage){ 
+            return { text: pageNo + '/' + numOfPage, alignment: 'right' }
+        },
         content: [
             Detail(21, 5, true),
             Detail(30, 9),
