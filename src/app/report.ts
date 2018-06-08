@@ -1,4 +1,3 @@
-import * as math from 'mathjs'
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -8,49 +7,23 @@ const Line = (value, pageBreak = false) => {
     } else {
         return { text: 'line ' + value }
     }
-
 }
-// const Header = (pageBreak = false) => {
-//     if (pageBreak) {
-//         return { text: 'Header ', pageBreak: 'before' }
-//     } else {
-//         return { text: 'Header ' }
-//     }
-
-// }
-// const Footer = (pageBreak = false) => {
-//     if (pageBreak) {
-//         return { text: 'Footer ', pageBreak: 'after' }
-//     } else {
-//         return { text: 'Footer ' }
-//     }
-// }
 const Detail = (totalLine, linesPerPage, firstTime = false) => {
     let result = [];
 
     for (let lineNo = 1; lineNo <= totalLine; lineNo++) {
         if (lineNo == 1) {
             if (firstTime) {
-                // result.push(Header())
                 result.push(Line(lineNo))
             } else {
-                // result.push(Header(true))
                 result.push(Line(lineNo, true))
             }
-
         }
         else if (lineNo % linesPerPage == 1) {
-            // result.push(Header(true))
             result.push(Line(lineNo, true))
-            // if (lineNo == totalLine) {
-            //     result.push(Footer())
-            // }
         }
         else {
             result.push(Line(lineNo))
-            // if (lineNo % linesPerPage == 0 || lineNo == totalLine) {
-            //     result.push(Footer())
-            // }
         }
     }
     return result
@@ -65,10 +38,17 @@ const report = () => {
             ] }
         },
         footer: function(pageNo, numOfPage){ 
-            return { columns: [
-                { text: 'Footer', alignment: 'left' },
-                { text: pageNo + '/' + numOfPage, alignment: 'right' }
-            ] }
+            let a =  { text: 'Footer', absolutePosition: {x:72*7 ,y:0 } };
+            let foot = {
+                columns: [
+                    { text: '', alignment: 'center' },
+                    // { text: 'Footer', alignment: 'center' },
+                    // { text: 'Footer', absolutePosition: {x:72*7 ,y:0 } },
+                    a,
+                    { text: pageNo + '/' + numOfPage, alignment: 'right' }
+                ]
+            }
+            return foot
         },
         content: [
             Detail(21, 5, true),
